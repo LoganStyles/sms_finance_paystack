@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>Payment | School Management System</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+ </head>
+ <body>
+
+<form id="card-form" action="/makePayment" method="POST">
+    <div id="error"><div id="error-message"></div><div id="error-errors"></div></div>
+    <input type="text" id="number" name="number" data-paystack="number" placeholder="number">
+    <input type="text" id="cvv" data-paystack="cvv" placeholder="{{cvv}}">
+    <input type="text" id="expiryMonth" data-paystack="expiryMonth" placeholder="expiryMonth">
+    <input type="text" id="expiryYear" data-paystack="expiryYear" placeholder="expiryYear">
+    <button type="submit" data-paystack="submit">Pay</button>
+</form>
+
+</body>
+</html>
