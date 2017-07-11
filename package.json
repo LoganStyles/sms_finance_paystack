@@ -1,10 +1,11 @@
 {
-  "name": "paystack",
+  "name": "paystack-pay",
   "version": "2.0.1",
   "description": "Paystack API wrapper",
-  "main": "index.js",
-  "scripts": {
-    "test": "./node_modules/.bin/mocha ./test/*.js --reporter spec --timeout 8000"
+  "main": "app.js",
+  "scripts": {    
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node app"
   },
   "keywords": [
     "payment",
@@ -15,8 +16,17 @@
   "author": "Opeyemi Obembe <kehers@gmail.com> (http://obem.be/opeyemi)",
   "license": "MIT",
   "dependencies": {
+    "express":"*",
+    "express-handlebars":"*",
+    "handlebars":"*",
+    "mongodb":"*",
+    "mongoose":"*",
+    "bcryptjs":"*",
+    "cookie-parser":"*",
+    "body-parser":"*",
     "promise": "^7.1.1",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "randomstring":"*"
   },
   "devDependencies": {
     "chai": "^3.5.0",

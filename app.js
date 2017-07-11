@@ -29,22 +29,24 @@ app.use(bodyParser.json());
 
 app.get('/',function(req,res){
 	res.render('index.html');
-})
+});
+
+/*recurring payments: verifyTransaction to get auth code, then use chargeAuth*/
 
 
 app.get('/payment',function(req,res){
 
 	MongoClient.connect(url,function(err,db){
 	if(err) throw err;
-	var query = {username: "sandy"};
+	var query = {username: "fggc"};//johnny,sandy
 	var plan=card_no=client_id=ref="";
-    var amount=500000;
+    var amount=800000;
 
 		//get client info		
 		db.collection("clients").findOne(query,function(err,client){
 			if(err) throw err;			
 
-			//generate  & chk reference
+			//generate reference
 			var existing_ref=0;			
 			do{
 				ref=random.generate(15);
@@ -79,42 +81,61 @@ app.get('/payment',function(req,res){
                         console.log("1 transaction record inserted");
                        db.close();
                     });
-                    res.redirect(auth_url);
+                    res.redirect(auth_url);//got payment page
 
     		});
 		});	
 
-
-
 	});
-	/*res.render('payment.html',{
-		cvv:'9393883'
-	});*/
 });
 
+app.get('/createSubAccount',function(req,res){
+	//create sub account-locally & on paystack
+	var bank="union",
+		acct_no="5584807009",
+		charge=0,
+		email="springfields@gmail.com",
+		biz_name="Spring college school",
+		username="spring",
+		auth_code="",
+		code="";
+	//check for existing account_number
+	MongoClient.connect(url,function(err,db){
+		if(err) throw err;
+		var query={acct_no:acct_no};
+		db.collection("clients").find(query).toArray(function(err,result){
+			var existing_acct=result.length;
+			if(existing_acct===0){//new sub acct
 
-app.post('/makePayment',function(req,res){	
-	console.log(req.body);
-	//make payment
-    		pay.transaction.verify({
-        		"reference": ref, 
-        		"authorization_code":auth_code,
-        		"amount": amount, 
-        		"email": client.email
-        		}).then(function(body,error){
-        			//console.log(error);
-        			//console.log(body);
+				pay.subaccount.create({
+		       	'business_name':biz_name,
+		       	'settlement_bank':bank,
+		       	'account_number':acct_no,
+		       	'percentage_charge':charge
+		       }).then(function(body,error){
+		       		if(error)console.log(error);
+		       		console.log(body);
+		       		code=body.data.subaccount_code;
+		       		//store locally
+					//insert into clients
+				    var trans_obj={bank:bank,acct_no:acct_no,charge:charge,
+				    	email:email,name:biz_name,subaccount_code:code,username:username,
+				    	auth_code:auth_code};
 
-                    //insert into transactions
-                    var trans_obj={client_id:client._id,amount:amount,plan:plan,card_no:card_no,reference:ref};
-                    db.collection("transactions").insertOne(trans_obj,function(err,res){
-                        if(err) throw err;
-                        console.log("1 transaction record inserted");
-                       db.close();
-                    });
+				    console.log(trans_obj);
+				    db.collection("clients").insertOne(trans_obj,function(err,res){
+				        if(err) throw err;
+				        console.log("1 client subaccount record inserted locally");
+				       db.close();		       
+				    });
+		
+				});
 
-    		});
+			}
 		});
+	});
+	
+});
 
 
 app.listen(9000,function(){
